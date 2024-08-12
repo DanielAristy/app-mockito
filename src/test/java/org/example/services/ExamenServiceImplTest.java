@@ -2,6 +2,7 @@ package org.example.services;
 
 import org.example.models.Examen;
 import org.example.repositories.ExamenRepository;
+import org.example.repositories.PreguntasRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -17,24 +18,20 @@ import static org.mockito.Mockito.when;
 class ExamenServiceImplTest {
 
     ExamenRepository repository;
+    PreguntasRepository preguntasRepository;
     ExamenService service;
 
     @BeforeEach
     void setUp() {
         repository = mock(ExamenRepository.class);
-        service = new ExamenServiceImpl(repository);
+        preguntasRepository = mock(PreguntasRepository.class);
+        service = new ExamenServiceImpl(repository, preguntasRepository);
     }
 
     @Test
     void findExamenPorNombre() throws InterruptedException {
 
-        List<Examen> datos = List.of(new Examen(1L, "Español"),
-                new Examen(2L, "Matematicas"), new Examen(3L, "Ciencias Naturales"),
-                new Examen(4L, "Religion"), new Examen(5L, "Sociales"),
-                new Examen(6L, "Ingles"), new Examen(7L, "Informatica")
-        );
-
-        when(repository.findAll()).thenReturn(datos);
+        when(repository.findAll()).thenReturn(Datos.EXAMENES);
         Optional<Examen> examen = service.findExamenPorNombre("Matematicas");
 
         assertEquals(2L, examen.orElseThrow().getId());
@@ -50,4 +47,13 @@ class ExamenServiceImplTest {
         assertFalse(examen.isPresent());
     }
 
+    @Test
+    void testPreguntaExamen() {
+        when(repository.findAll()).thenReturn(Datos.EXAMENES);
+        when(preguntasRepository.findPreguntasPorExamenId(5L)).thenReturn(Datos.PREGUNTAS);
+
+        Examen examen = service.findExamenPorNombreConPreguntas("Sociales");
+
+        assertEquals(4, examen.getPreguntas().size());
+    }
 }
