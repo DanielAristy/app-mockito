@@ -5,27 +5,33 @@ import org.example.repositories.ExamenRepository;
 import org.example.repositories.PreguntasRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class ExamenServiceImplTest {
 
+    @Mock
     ExamenRepository repository;
+    @Mock
     PreguntasRepository preguntasRepository;
-    ExamenService service;
+
+    @InjectMocks
+    ExamenServiceImpl service;
 
     @BeforeEach
     void setUp() {
-        repository = mock(ExamenRepository.class);
-        preguntasRepository = mock(PreguntasRepository.class);
-        service = new ExamenServiceImpl(repository, preguntasRepository);
+
     }
 
     @Test
@@ -55,5 +61,31 @@ class ExamenServiceImplTest {
         Examen examen = service.findExamenPorNombreConPreguntas("Sociales");
 
         assertEquals(4, examen.getPreguntas().size());
+        assertTrue(examen.getPreguntas().contains("Integrales"));
+    }
+
+    @Test
+    void testPreguntaExamenVerify() {
+        when(repository.findAll()).thenReturn(Datos.EXAMENES);
+        when(preguntasRepository.findPreguntasPorExamenId(5L)).thenReturn(Datos.PREGUNTAS);
+
+        Examen examen = service.findExamenPorNombreConPreguntas("Sociales");
+
+        assertEquals(4, examen.getPreguntas().size());
+        assertTrue(examen.getPreguntas().contains("Integrales"));
+        verify(repository).findAll();
+        verify(preguntasRepository).findPreguntasPorExamenId(5L);
+    }
+
+    @Test
+    void testNoExisteExamenVerify() {
+        when(repository.findAll()).thenReturn(Collections.emptyList());
+        //when(preguntasRepository.findPreguntasPorExamenId(5L)).thenReturn(Datos.PREGUNTAS);
+
+        Examen examen = service.findExamenPorNombreConPreguntas("Sociales");
+
+        assertNull(examen);
+        verify(repository).findAll();
+        //verify(preguntasRepository).findPreguntasPorExamenId(5L);
     }
 }
