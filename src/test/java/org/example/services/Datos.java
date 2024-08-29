@@ -14,4 +14,6 @@ public class Datos {
     );
 
     public final static List<String> PREGUNTAS = Arrays.asList("Aritmetica", "Integrales", "Derivadas", "Geometria");
+
+    public final static Examen EXAMEN = new Examen(45L, "Artistica");
 }

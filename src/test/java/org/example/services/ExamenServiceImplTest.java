@@ -88,4 +88,30 @@ class ExamenServiceImplTest {
         verify(repository).findAll();
         //verify(preguntasRepository).findPreguntasPorExamenId(5L);
     }
+
+    @Test
+    void testGuardarExamenSinPregutnas(){
+        when(repository.guardar(any(Examen.class))).thenReturn(Datos.EXAMEN);
+        Examen examen = service.guardar(Datos.EXAMEN);
+
+        assertNotNull(examen.getId());
+        assertEquals(45L, examen.getId());
+        assertEquals("Artistica", examen.getNombre());
+        verify(repository).guardar(any(Examen.class));
+    }
+
+    @Test
+    void testGuardarExamenConPregutnas(){
+        Examen newExamen = Datos.EXAMEN;
+        newExamen.setPreguntas(Datos.PREGUNTAS);
+        when(repository.guardar(any(Examen.class))).thenReturn(Datos.EXAMEN);
+        Examen examen = service.guardar(newExamen);
+        examen.setPreguntas(Datos.PREGUNTAS);
+
+        assertNotNull(examen.getId());
+        assertEquals(45L, examen.getId());
+        assertEquals("Artistica", examen.getNombre());
+        verify(repository).guardar(any(Examen.class));
+        verify(preguntasRepository).guardarVarias(Datos.PREGUNTAS);
+    }
 }
