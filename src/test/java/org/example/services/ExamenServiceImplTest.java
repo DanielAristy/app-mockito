@@ -114,4 +114,16 @@ class ExamenServiceImplTest {
         verify(repository).guardar(any(Examen.class));
         verify(preguntasRepository).guardarVarias(Datos.PREGUNTAS);
     }
+
+    @Test
+    void testManeroException(){
+        when(repository.findAll()).thenReturn(Datos.EXAMENES);
+        when(preguntasRepository.findPreguntasPorExamenId(anyLong())).thenThrow(IllegalArgumentException.class);
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            service.findExamenPorNombreConPreguntas("Español");
+        });
+        assertEquals(IllegalArgumentException.class, exception.getClass());
+        verify(repository).findAll();
+        verify(preguntasRepository).findPreguntasPorExamenId(anyLong());
+    }
 }
