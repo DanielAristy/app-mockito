@@ -13,6 +13,12 @@ public class Datos {
             new Examen(6L, "Ingles"), new Examen(7L, "Informatica")
     );
 
+    public final static List<Examen> EXAMENES_ID_NEGATIVOS = List.of(new Examen(-1L, "Español"),
+            new Examen(-2L, "Matematicas"), new Examen(-3L, "Ciencias Naturales"),
+            new Examen(-4L, "Religion"), new Examen(null, "Sociales"),
+            new Examen(-6L, "Ingles"), new Examen(-4L, "Informatica")
+    );
+
     public final static List<String> PREGUNTAS = Arrays.asList("Aritmetica", "Integrales", "Derivadas", "Geometria");
 
     public final static Examen EXAMEN = new Examen(45L, "Artistica");

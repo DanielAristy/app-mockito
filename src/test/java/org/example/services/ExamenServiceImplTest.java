@@ -6,6 +6,7 @@ import org.example.repositories.PreguntasRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatcher;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -135,5 +136,32 @@ class ExamenServiceImplTest {
 
          verify(repository).findAll();
          verify(preguntasRepository).findPreguntasPorExamenId(argThat(arg -> arg != null && arg == 7L));
+    }
+
+    @Test
+    void testArgumentMatchersTwo(){
+        when(repository.findAll()).thenReturn(Datos.EXAMENES_ID_NEGATIVOS);
+        when(preguntasRepository.findPreguntasPorExamenId(anyLong())).thenReturn(Datos.PREGUNTAS);
+        service.findExamenPorNombreConPreguntas("Informatica");
+
+        verify(repository).findAll();
+        verify(preguntasRepository).findPreguntasPorExamenId(argThat(new MiArgMatchers()));
+    }
+
+    public static class MiArgMatchers implements ArgumentMatcher<Long>{
+        private Long argument;
+
+        @Override
+        public boolean matches(Long argument) {
+            this.argument = argument;
+            return argument != null && argument > 0;
+        }
+
+
+        @Override
+        public String toString() {
+            return "Mensaje personalizado de error que imprime mockito en caso de que falle el test " +
+                    argument + " deber ser entero positivo";
+        }
     }
 }
