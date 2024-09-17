@@ -171,6 +171,20 @@ class ExamenServiceImplTest {
         });
     }
 
+    @Test
+    void testDoAnswer(){
+        when(repository.findAll()).thenReturn(Datos.EXAMENES);
+        //when(preguntasRepository.findPreguntasPorExamenId(anyLong())).thenReturn(Datos.PREGUNTAS);
+        doAnswer(invocation -> {
+            Long id = invocation.getArgument(0);
+            return id == 1L ? Datos.PREGUNTAS : Collections.emptyList();
+        }).when(preguntasRepository).findPreguntasPorExamenId(anyLong());
+
+        Examen examen = service.findExamenPorNombreConPreguntas("Español");
+        assertEquals(1L, examen.getId());
+        assertEquals("Español", examen.getNombre());
+    }
+
     public static class MiArgMatchers implements ArgumentMatcher<Long>{
         private Long argument;
 
