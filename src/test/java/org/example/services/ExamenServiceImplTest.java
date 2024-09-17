@@ -126,4 +126,14 @@ class ExamenServiceImplTest {
         verify(repository).findAll();
         verify(preguntasRepository).findPreguntasPorExamenId(anyLong());
     }
+
+    @Test
+    void testArgumentMatches(){
+         when(repository.findAll()).thenReturn(Datos.EXAMENES);
+         when(preguntasRepository.findPreguntasPorExamenId(anyLong())).thenReturn(Datos.PREGUNTAS);
+         service.findExamenPorNombreConPreguntas("Informatica");
+
+         verify(repository).findAll();
+         verify(preguntasRepository).findPreguntasPorExamenId(argThat(arg -> arg != null && arg == 7L));
+    }
 }
