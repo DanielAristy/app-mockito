@@ -6,10 +6,7 @@ import org.example.repositories.PreguntasRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentMatcher;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
@@ -29,6 +26,9 @@ class ExamenServiceImplTest {
 
     @InjectMocks
     ExamenServiceImpl service;
+
+    @Captor
+    ArgumentCaptor<Long> captor;
 
     @BeforeEach
     void setUp() {
@@ -146,6 +146,18 @@ class ExamenServiceImplTest {
 
         verify(repository).findAll();
         verify(preguntasRepository).findPreguntasPorExamenId(argThat(new MiArgMatchers()));
+    }
+
+    @Test
+    void testArgumentCaptor(){
+        when(repository.findAll()).thenReturn(Datos.EXAMENES);
+        when(preguntasRepository.findPreguntasPorExamenId(anyLong())).thenReturn(Datos.PREGUNTAS);
+        service.findExamenPorNombreConPreguntas("Informatica");
+
+        verify(repository).findAll();
+        verify(preguntasRepository).findPreguntasPorExamenId(captor.capture());
+
+        assertEquals(7L, captor.getValue());
     }
 
     public static class MiArgMatchers implements ArgumentMatcher<Long>{
