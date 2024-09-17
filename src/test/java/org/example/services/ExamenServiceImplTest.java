@@ -160,6 +160,17 @@ class ExamenServiceImplTest {
         assertEquals(7L, captor.getValue());
     }
 
+    @Test
+    void testDoThrow(){
+        Examen examen = Datos.EXAMEN;
+        examen.setPreguntas(Datos.PREGUNTAS);
+        doThrow(IllegalArgumentException.class).when(preguntasRepository).guardarVarias(anyList());
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            service.guardar(examen);
+        });
+    }
+
     public static class MiArgMatchers implements ArgumentMatcher<Long>{
         private Long argument;
 
